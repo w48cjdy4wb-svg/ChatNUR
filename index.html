@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
+  <meta name="description" content="ChatNUR — независимый ИИ-помощник для общения, идей и учёбы.">
+  <title>ChatNUR — ИИ-помощник</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    :root{color-scheme:dark;--bg:#101010;--panel:#191919;--line:#303030;--text:#f5f5f5;--muted:#aaa}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+    .app{max-width:900px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;padding:18px}
+    header{display:flex;align-items:center;gap:12px;padding:8px 0 18px;border-bottom:1px solid var(--line)}
+    .logo{width:42px;height:42px;border:1px solid #777;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:20px}
+    h1{font-size:20px;margin:0}.sub{font-size:12px;color:var(--muted)}
+    #chat{flex:1;padding:22px 0;display:flex;flex-direction:column;gap:14px}
+    .welcome{margin:auto;text-align:center;max-width:540px}.welcome h2{font-size:clamp(25px,5vw,38px);margin:0 0 8px}.welcome p{color:var(--muted);margin:0}
+    .msg{max-width:82%;padding:12px 15px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .user{align-self:flex-end;background:#eee;color:#111;border-bottom-right-radius:5px}
+    .assistant{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:5px}
+    form{display:flex;gap:10px;background:var(--panel);border:1px solid var(--line);padding:10px;border-radius:22px}
+    textarea{flex:1;resize:none;max-height:160px;min-height:44px;background:transparent;color:var(--text);border:0;outline:0;font:inherit;padding:10px}
+    button{border:0;border-radius:15px;background:#f4f4f4;color:#111;padding:0 18px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.5;cursor:default}.hint{text-align:center;color:var(--muted);font-size:11px;padding:9px}
+    @media(max-width:600px){.app{padding:12px}.msg{max-width:92%}button{padding:0 14px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header><div class="logo" aria-hidden="true">Н</div><div><h1>ChatNUR</h1><div class="sub">Твой ИИ-помощник</div></div></header>
+  <main id="chat" aria-live="polite">
+    <div class="welcome" id="welcome"><h2>Чем могу помочь?</h2><p>Задай вопрос, попроси объяснить тему или помочь с идеей.</p></div>
+  </main>
+  <form id="form"><textarea id="prompt" rows="1" placeholder="Напиши сообщение..." aria-label="Сообщение"></textarea><button id="send" type="submit">Отправить</button></form>
+  <div class="hint">Ответы ИИ подключаются на сервере. Не отправляй личные данные и пароли.</div>
+</div>
+<script>
+const form=document.querySelector('#form'), input=document.querySelector('#prompt'), chat=document.querySelector('#chat'), send=document.querySelector('#send');
+function add(text,kind){document.querySelector('#welcome')?.remove();const el=document.createElement('div');el.className='msg '+kind;el.textContent=text;chat.append(el);el.scrollIntoView({behavior:'smooth',block:'end'});return el}
+form.addEventListener('submit',async e=>{e.preventDefault();const message=input.value.trim();if(!message)return;add(message,'user');input.value='';send.disabled=true;
+  const reply=add('Пока это демонстрационная версия ChatNUR. Следующий этап — подключить ИИ-сервер.','assistant');
+  send.disabled=false;input.focus();
+});
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit()}});
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+</script>
+</body></html>
